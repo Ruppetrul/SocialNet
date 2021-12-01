@@ -23,9 +23,10 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <form method="get" class="form-row" action="">
+
+                    <form method="get" class="form-row" action="{{ route('search') }}">
                         <div class="form-row col-md-10">
-                            <input type="text" class="form-control" id="s" name="s" placeholder="Input username">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Input username">
                         </div>
                         <div class="form-group col-md-2">
                             <button type="submit" class="btn btn-primary ">Search</button>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,10 +15,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'App\Http\Controllers\HomeController@search');
+Route::get('/search', 'App\Http\Controllers\HomeController@search')
+    ->name('search');
 
-Route::view('home','home')->middleware('auth');
+Route::get('home','App\Http\Controllers\HomeController@search');
+//Route::view('home','/')->middleware('auth');
+
 //Route::get('/profile/{user_id?}', [ProfileController::class,'profile']);
 Route::get('/profile/{profile_id?}', 'App\Http\Controllers\ProfileController@profile');

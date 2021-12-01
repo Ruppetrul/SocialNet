@@ -19,29 +19,50 @@
 
             </div>
         </div>
-    @endif
-    @if(count($comments))
-        <div class="table-responsive">
-            <table class="table table-hover table-striped">
-                <thead>
-                <tr>
-                    <th scope="col">Author</th>
-                    <th scope="col">Comment</th>
-                </tr>
-                </thead>
 
-                <tbody>
-                @foreach($comments as $comment)
-                    <tr>
-                        <th scope="row">{{ $comment->id }}</th>
-                        <td>{{ $comment->text }}</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
+        @if(Auth::check())
+            <div class="modal-content modal-body mt-4 mb-4">
+                <form method="get" action="{{ route('search') }}">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="text" name="text" placeholder="Text">
+                        </div>
+                        <div class="">
+                            <button type="submit" class="btn btn-primary btn-block">Send</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        @else
+            <div class="modal-content modal-body mt-4 mb-4 ">
+                <div class="text-danger text-center">
+                    <a>Unregistered users can not leave comments. Login or register.</a>
+                </div>
+            </div>
 
-        </div><!-- ./table-responsive-->
-    @else
-        <p>Комментариев не найдено...</p>
+
+        @endif
+
+        @if(count($comments))
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+
+                    <tbody>
+                    @foreach($comments as $comment)
+                        <tr>
+                            <th scope="row">{{ $comment->id_comment_author }}</th>
+                            <td>{{ $comment->text }}</td>
+                        </tr>
+                    @endforeach
+
+                    </tbody>
+                </table>
+            </div><!-- ./table-responsive-->
+        @else
+            <p>Комментариев не найдено...</p>
+        @endif
     @endif
 @endsection
