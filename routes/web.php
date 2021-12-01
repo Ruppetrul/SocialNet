@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,3 +19,5 @@ Route::get('/', function () {
 });
 
 Route::view('home','home')->middleware('auth');
+//Route::get('/profile/{user_id?}', [ProfileController::class,'profile']);
+Route::get('/profile/{profile_id?}', 'App\Http\Controllers\ProfileController@profile');

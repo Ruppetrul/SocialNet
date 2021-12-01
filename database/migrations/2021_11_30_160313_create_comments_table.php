@@ -23,7 +23,7 @@ class CreateCommentsTable extends Migration
             $table->timestamp('updated_at')->useCurrent();
 
             $table->foreign('id_book')->references('id')
-                ->on('books');
+                ->on('users');
         });
     }
 
