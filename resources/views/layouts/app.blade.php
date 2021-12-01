@@ -23,9 +23,16 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
-                </a>
+                <form method="get" class="form-row" action="">
+                        <div class="form-row col-md-10">
+                            <input type="text" class="form-control" id="s" name="s" placeholder="Input username">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button type="submit" class="btn btn-primary ">Search</button>
+                        </div>
+
+                    </form>
+
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>

@@ -1,23 +1,47 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+    @if(isset($user))
+        <div class="modal-content">
+            <div class="modal-body">
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+                <table>
+                    <tbody>
+                    <tr>Name: {{ $user['name'] }}
+                        @if($user['id']==Auth::id())
+                            (You)
+                        @endif
 
-                    {{ __('You are logged in!') }}
-                </div>
+                    </tr>
+                    <td>Email: {{ $user['email'] }}</td>
+                    </tbody>
+                </table>
+
             </div>
         </div>
-    </div>
-</div>
+    @endif
+    @if(count($comments))
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Author</th>
+                    <th scope="col">Comment</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                @foreach($comments as $comment)
+                    <tr>
+                        <th scope="row">{{ $comment->id }}</th>
+                        <td>{{ $comment->text }}</td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+
+        </div><!-- ./table-responsive-->
+    @else
+        <p>Комментариев не найдено...</p>
+    @endif
 @endsection
