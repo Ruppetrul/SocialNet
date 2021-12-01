@@ -14,13 +14,7 @@ class AlterUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            //$table->primary('id');
-            $table->dropColumn('name');
             $table->dropColumn('email_verified_at');
-            $table->dropColumn('two_factor_secret');
-            $table->dropColumn('two_factor_recovery_codes');
-            $table->dropRememberToken();
-            $table->dropTimestamps();
         });
     }
 
@@ -32,11 +26,7 @@ class AlterUsersTable extends Migration
     public function down()
     {
         Schema::create('users', function (Blueprint $table) {
-            // TODO Drop primary
-            $table->string('name');
             $table->timestamp('email_verified_at')->nullable();
-            $table->rememberToken();
-            $table->timestamps();
         });
     }
 }
