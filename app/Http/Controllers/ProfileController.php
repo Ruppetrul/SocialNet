@@ -14,7 +14,7 @@ class ProfileController extends Controller
 
     private function getContent($user_id) {
         $user = User::where('id',$user_id)->first();
-        $comments = Comment::where('id_user',$user_id)->get();
+        $comments = Comment::where('id_user',$user_id)->orderby('created_at','desc')->paginate(5);
         return view('profile',compact('user','comments'));
     }
 
@@ -29,34 +29,50 @@ class ProfileController extends Controller
         }
     }
 
-    public function sendComment(Request $request, $user_id) {
+    public function sendComment(Request $request, $user_id, $reply_id = null) {
         if (Auth::check()) {
             try {
                 $author_id = $request->user()['id'];
-
                 $comment = new Comment;
                 $comment->id_comment_author = $author_id;
                 $comment->id_user = $user_id;
                 $comment->text = $_POST['text'];
-
+                if (isset($reply_id)) {
+                    $comment->id_comment_reply = $reply_id;
+                }
                 $comment->save();
+                $_GET['reply'] = null;
+                return redirect('profile/'.$user_id);
 
-                return back();
             } catch (\Exception $exception) {
                 echo 'Add comment error';
             }
-
         } else {
             return view('welcome');
         }
+    }
 
+    public function deleteComment(Request $request, $comment_id) {
+        if (Auth::check()) {
+            $remover_id = $request->user()['id'];
+            $comment = Comment::where('id',$comment_id)->first();
+            if (isset($comment)) {
+                $comment_author_id = $comment->id_comment_author;
+                if ($remover_id == $comment_author_id || $remover_id == $comment->id_user) {
+                    $deleteComment = Comment::where('id', $comment_id)->delete();
+                    if($deleteComment) {
+                        return back();
+                    } else {
+                        echo 'Error delete comment';
+                    }
+                }
+                else echo 'You do not have sufficient authority to delete this post';
 
-
-
-        /*DB::table('comments')->insert([
-            'id_comment_author' => $author_id,
-            'id_user' => $user_id,
-            'text' => $_POSt['text'],
-        ]);*/
+            } else {
+                echo 'Comment not found';
+            }
+        } else {
+            return view('welcome');
+        }
     }
 }
