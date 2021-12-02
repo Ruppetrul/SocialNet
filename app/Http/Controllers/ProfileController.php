@@ -7,14 +7,30 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 class ProfileController extends Controller
 {
-
     private function getContent($user_id) {
         $user = User::where('id',$user_id)->first();
-        $comments = Comment::where('id_user',$user_id)->orderby('created_at','desc')->paginate(5);
+        //$comments = Comment::where('id_user',$user_id)->orderby('created_at','desc')->paginate(5);
+
+        $replys = DB::table('comments')
+            ->join('users','users.id','=','comments.id_comment_author')
+            ->select( 'comments.id_comment_reply','comments.text as reply_text','users.name as reply_author_name')
+            ->where('comments.id_comment_reply','!=',null)
+            ->where('comments.id_user','=',$user_id);
+
+        $comments = DB::table('comments')
+            ->join('users','users.id', "=", 'comments.id_comment_author')
+            ->where('comments.id_user','=',$user_id)
+            ->orderBy('comments.created_at','desc')
+            ->leftJoinSub($replys,'replys', function ($join) {
+                $join->on('comments.id_comment_reply', '=', 'replys.id_comment_reply');
+            })
+            ->get();
+
         return view('profile',compact('user','comments'));
     }
 

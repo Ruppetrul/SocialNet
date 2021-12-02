@@ -67,14 +67,25 @@
                     <tbody>Сообщение от
                     @foreach($comments as $comment)
                         <tr>
-                            <th scope="row">{{ $comment->id_comment_author }}</th>
+                            <th scope="row">{{ $comment->name }}(id:{{ $comment->id_comment_author }})</th>
                             <td class="container text-capitalize">
                                 @if(isset($comment->id_comment_reply))
-                                    <div class="p-4 text-info">
-                                        <a>Message reply:<br> {{ $comment->id_comment_reply }}</a><br>
+                                    <p>Reply:</p>
+
+                                    <div class="container">
+                                        <div class="modal-content modal-body mt-4 mb-4  ">
+                                            <a>Author: {{ $comment->reply_author_name }}</a><br>
+                                            <a>{{ $comment->reply_text }}</a><br>
+                                        </div>
                                     </div>
                                 @endif
-                                {{ $comment->text }}
+                                <p>
+                                   {{-- {{ $comment->title }}--}}
+                                    {{--Title--}}
+                                </p>
+                                <a>
+                                    {{ $comment->text }}
+                                </a>
                             </td>
                         </tr>
                         <tr>
