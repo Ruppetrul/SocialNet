@@ -22,13 +22,14 @@
 
         @if(Auth::check())
             <div class="modal-content modal-body mt-4 mb-4">
-                <form method="get" action="{{ route('search') }}">
+                <form method="post" action="/profile/sendComment/{{ $user['id'] }}">
+                    @csrf
                     <div class="col-md-12">
                         <div class="form-group">
-                            <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+                            <input type="text" class="form-control" id="title" name="title" required minlength=6 maxlength="36" placeholder="Title">
                         </div>
                         <div class="form-group">
-                            <input type="text" class="form-control" id="text" name="text" placeholder="Text">
+                            <input type="text" required class="form-control" id="text" minlength=3 maxlength="255" name="text" placeholder="Text">
                         </div>
                         <div class="">
                             <button type="submit" class="btn btn-primary btn-block">Send</button>

@@ -24,3 +24,4 @@ Route::get('home','App\Http\Controllers\HomeController@search');
 
 //Route::get('/profile/{user_id?}', [ProfileController::class,'profile']);
 Route::get('/profile/{profile_id?}', 'App\Http\Controllers\ProfileController@profile');
+Route::post('/profile/sendComment/{user_id}', 'App\Http\Controllers\ProfileController@sendComment');
