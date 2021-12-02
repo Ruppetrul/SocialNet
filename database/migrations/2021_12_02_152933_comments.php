@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterComments extends Migration
+class Comments extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AlterComments extends Migration
     public function up()
     {
         Schema::table('comments', function (Blueprint $table) {
-            $table->renameColumn('id_book','id_user');
+            $table->string('title',50);
         });
     }
 
@@ -25,9 +25,8 @@ class AlterComments extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->renameColumn('id_user','id_book');
+        Schema::table('comments', function (Blueprint $table) {
+            $table->dropColumn('title');
         });
-
     }
 }

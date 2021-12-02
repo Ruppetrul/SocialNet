@@ -8,34 +8,58 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use function PHPUnit\Framework\isNull;
 
 class ProfileController extends Controller
 {
-    private function getContent($user_id) {
+    private function getContent($user_id, $reply = null ) {
         $user = User::where('id',$user_id)->first();
-        //$comments = Comment::where('id_user',$user_id)->orderby('created_at','desc')->paginate(5);
 
-        $replys = DB::table('comments')
-            ->join('users','users.id','=','comments.id_comment_author')
-            ->select( 'comments.id_comment_reply','comments.text as reply_text','users.name as reply_author_name')
-            ->where('comments.id_comment_reply','!=',null)
-            ->where('comments.id_user','=',$user_id);
+        $comments = DB::table('comments as profile_comments')
+            ->leftJoin('users as profile_users','profile_users.id','=',
+                'profile_comments.id_comment_author')
+            ->where('profile_comments.id_user','=',$user_id)
 
-        $comments = DB::table('comments')
-            ->join('users','users.id', "=", 'comments.id_comment_author')
-            ->where('comments.id_user','=',$user_id)
-            ->orderBy('comments.created_at','desc')
-            ->leftJoinSub($replys,'replys', function ($join) {
-                $join->on('comments.id_comment_reply', '=', 'replys.id_comment_reply');
-            })
-            ->get();
+            ->leftJoin('comments as reply_comments','profile_comments.id_comment_reply',
+            '=','reply_comments.id_comment')
+            ->leftJoin('users as reply_users','reply_users.id','=',
+                'reply_comments.id_comment_author')
+            ->select(
+                'profile_comments.id_comment',
+                'profile_comments.text',
+                'profile_comments.title',
+                'profile_comments.created_at',
+                'profile_comments.id_comment_author',
+                'profile_comments.id_comment_reply as id_comment_reply',
+                'profile_users.name',
 
-        return view('profile',compact('user','comments'));
+                'reply_comments.text as reply_text',
+                'reply_comments.title as reply_title',
+                'reply_comments.created_at as reply_created_at',
+                'reply_comments.id_comment_author as reply_id_comment_author',
+                'reply_users.name as reply_author_name',
+                )
+
+            ->orderBy('profile_comments.created_at','desc')
+            ->paginate(5);
+        return view('profile',compact('user','comments','reply'));
     }
 
     public function profile($profile_id = null) {
         if (isset($profile_id)){
+            if (isset($_GET['reply'])) {
+                $reply = DB::table('comments')
+                    ->where('id_comment', $_GET['reply'])
+                    ->leftJoin('users', 'comments.id_comment_author','=','users.id')
+                    ->select('users.id as id_author',
+                        'users.name as author_name',
+                        'comments.id_comment',
+                        'comments.text',
+                        'comments.title')
+                    ->first();
+                return $this->getContent($profile_id,$reply);
+            }
+
             return $this->getContent($profile_id);
         } else if (Auth::check()) {
             $user_id = Auth::id();
@@ -53,6 +77,7 @@ class ProfileController extends Controller
                 $comment->id_comment_author = $author_id;
                 $comment->id_user = $user_id;
                 $comment->text = $_POST['text'];
+                $comment->title = $_POST['title'];
                 if (isset($reply_id)) {
                     $comment->id_comment_reply = $reply_id;
                 }

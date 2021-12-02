@@ -19,6 +19,7 @@ class CommentFactory extends Factory
             'id_user' => $this->faker->randomNumber(1,10),
             'id_comment_author' => $this->faker->randomNumber(1,10),
             'text' => $this->faker->realText,
+            'title' => $this->faker->title,
             'created_at' => $this->faker->dateTime(),
             'updated_at' => $this->faker->dateTime(),
         ];

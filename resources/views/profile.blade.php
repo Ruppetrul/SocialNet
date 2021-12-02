@@ -8,13 +8,13 @@
 
                 <table>
                     <tbody>
-                    <tr>Name: {{ $user['name'] }}
-                        @if($user['id']==Auth::id())
+                    <tr>Name: {{ $user->name }}
+                        @if($user->id==Auth::id())
                             (You)
                         @endif
 
                     </tr>
-                    <td>Email: {{ $user['email'] }}</td>
+                    <td>Email: {{ $user->email }}</td>
                     </tbody>
                 </table>
 
@@ -31,9 +31,16 @@
                     @csrf
                          <div class="col-md-12">
 
-                         @if(isset($_GET['reply']))
+                         @if(isset($reply))
                          <div class="form-group">
-                             <a> Reply to comment on id: {{$_GET['reply']}} </a>
+                             <a> Re: {{$reply->author_name}} </a>
+                             <div class="container">
+                                 <div class="modal-content modal-body mt-4 mb-4  ">
+                                     <p>Title: {{ $reply->title }}</p>
+                                     <a>{{ $reply->text }}</a><br>
+
+                                 </div>
+                             </div>
                          </div>
                          @endif
 
@@ -67,21 +74,31 @@
                     <tbody>Сообщение от
                     @foreach($comments as $comment)
                         <tr>
-                            <th scope="row">{{ $comment->name }}(id:{{ $comment->id_comment_author }})</th>
-                            <td class="container text-capitalize">
+                            <th scope="row text-capitalize">
+                                {{ $comment->name }}(id:{{ $comment->id_comment_author }})</th>
+                            <td class="text-capitalize">
                                 @if(isset($comment->id_comment_reply))
-                                    <p>Reply:</p>
-
+                                    <p>Reply: </p>
                                     <div class="container">
-                                        <div class="modal-content modal-body mt-4 mb-4  ">
-                                            <a>Author: {{ $comment->reply_author_name }}</a><br>
+
+                                    @if(isset($comment->reply_author_name)||isset($comment->reply_text)
+                                           ||isset($comment->reply_title))
+
+                                            <div class="modal-content modal-body mt-4 mb-4  ">
+                                            <p>Author: {{ $comment->reply_author_name }}</p><br>
+                                            <a>Title: {{ $comment->reply_title }}</a>
                                             <a>{{ $comment->reply_text }}</a><br>
-                                        </div>
+                                            </div>
+
+                                    @else
+                                            <p>Comment has been deleted</p>
+                                    @endif
+
                                     </div>
                                 @endif
                                 <p>
                                    {{-- {{ $comment->title }}--}}
-                                    {{--Title--}}
+                                    <h4 class="">Title: {{ $comment->title }}</h4>
                                 </p>
                                 <a>
                                     {{ $comment->text }}
@@ -94,10 +111,10 @@
                                     @if(Auth::check())
                                         <form class="btn btn-primary" action="" method="GET" >
                                             @csrf
-                                            <button class="btn btn-primary" role="button" name="reply" value="{{$comment->id}}">Reply</button>
+                                            <button class="btn btn-primary" role="button" name="reply" value="{{$comment->id_comment}}">Reply</button>
                                         </form>
                                             @if($comment->id_comment_author == Auth::id() || $user->id == Auth::id())
-                                            <form class="btn btn-primary" action="/profile/delete/{{ $comment->id }}" method="POST">
+                                            <form class="btn btn-primary" action="/profile/delete/{{ $comment->id_comment }}" method="POST">
                                                 @csrf
                                                 <button type="submit" class="btn btn-primary btn-block">Delete</button>
                                             </form>
@@ -107,12 +124,8 @@
                                 </div>
                             </td>
                         </tr>
-
-
-
                     @endforeach
                     </tbody>
-
                 </table>
             </div><!-- ./table-responsive-->
         @else

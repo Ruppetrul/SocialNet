@@ -23,7 +23,7 @@ Route::get('home','App\Http\Controllers\HomeController@search');
 //Route::view('home','/')->middleware('auth');
 
 //Route::get('/profile/{user_id?}', [ProfileController::class,'profile']);
-Route::get('/profile/{profile_id?}', 'App\Http\Controllers\ProfileController@profile');
+Route::get('/profile/{comment_id?}', 'App\Http\Controllers\ProfileController@profile');
 Route::post('/profile/sendComment/{user_id}/{reply_id?}', 'App\Http\Controllers\ProfileController@sendComment');
 
 Route::post('/profile/delete/{comment_id}', 'App\Http\Controllers\ProfileController@deleteComment')
