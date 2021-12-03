@@ -125,11 +125,23 @@
                             </td>
                         </tr>
                     @endforeach
+
+                    <code lang="html">
+                        <div id="content"></div>
+                    </code>
                     </tbody>
                 </table>
             </div><!-- ./table-responsive-->
+            <div class="modal-body">
+                {{ csrf_field() }}
+                <div id="post_data">
+
+                </div>
+            </div>
         @else
             <p>Комментариев не найдено...</p>
         @endif
     @endif
+
+
 @endsection
