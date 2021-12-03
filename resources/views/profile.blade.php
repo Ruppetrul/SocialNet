@@ -8,13 +8,13 @@
 
                 <table>
                     <tbody>
-                    <tr>Name: {{ $user->name }}
+                    <tr>Name: {{ htmlspecialchars($user->name) }}
                         @if($user->id==Auth::id())
                             (You)
                         @endif
 
                     </tr>
-                    <td>Email: {{ $user->email }}</td>
+                    <td>Email: {{ htmlspecialchars($user->email) }}</td>
                     </tbody>
                 </table>
 
@@ -24,20 +24,20 @@
         @if(Auth::check())
             <div class="modal-content modal-body mt-4 mb-4">
                 @if(isset($_GET['reply']))
-                    <form method="post" action="/profile/sendComment/{{ $user['id'] }}/{{ $_GET['reply'] }}">
+                    <form method="post" action="/profile/sendComment/{{ htmlspecialchars($user['id']) }}/{{ htmlspecialchars($_GET['reply']) }}">
                 @else
-                    <form method="post" action="/profile/sendComment/{{ $user['id'] }}">
+                    <form method="post" action="/profile/sendComment/{{ htmlspecialchars($user['id']) }}">
                 @endif
                     @csrf
                          <div class="col-md-12">
 
                          @if(isset($reply))
                          <div class="form-group">
-                             <a> Re: {{$reply->author_name}} </a>
+                             <a> Re: {{ htmlspecialchars($reply->author_name) }} </a>
                              <div class="container">
                                  <div class="modal-content modal-body mt-4 mb-4  ">
-                                     <p>Title: {{ $reply->title }}</p>
-                                     <a>{{ $reply->text }}</a><br>
+                                     <p>Title: {{ htmlspecialchars($reply->title) }}</p>
+                                     <a>{{ htmlspecialchars($reply->text) }}</a><br>
 
                                  </div>
                              </div>
@@ -75,7 +75,7 @@
                     @foreach($comments as $comment)
                         <tr>
                             <th scope="row text-capitalize">
-                                {{ $comment->name }}(id:{{ $comment->id_comment_author }})</th>
+                                {{ htmlspecialchars($comment->name) }}(id:{{ htmlspecialchars($comment->id_comment_author) }})</th>
                             <td class="text-capitalize">
                                 @if(isset($comment->id_comment_reply))
                                     <p>Reply: </p>
@@ -85,13 +85,13 @@
                                            ||isset($comment->reply_title))
 
                                             <div class="modal-content modal-body mt-4 mb-4  ">
-                                            <p>Author: {{ $comment->reply_author_name }}</p><br>
-                                            <a>Title: {{ $comment->reply_title }}</a>
-                                            <a>{{ $comment->reply_text }}</a><br>
+                                            <p>Author: {{ htmlspecialchars($comment->reply_author_name) }}</p><br>
+                                            <a>Title: {{ htmlspecialchars($comment->reply_title) }}</a>
+                                            <a>{{ htmlspecialchars($comment->reply_text) }}</a><br>
                                             </div>
 
                                     @else
-                                            <p>Comment has been deleted</p>
+                                            <h>Comment has been deleted</h>
                                     @endif
 
                                     </div>

@@ -29,19 +29,13 @@ class HomeController extends Controller
         if (Auth::check()) {
             return view('profile');
         } else {
-            return view('search');
+            return redirect('/home');;
         }
     }
 
-    public function search(Request $request) {
-        $name = $request->name;
-        if (isset($name)) {
-            $users = User::where('name', 'LIKE', "%{$name}%")
-                ->orderBy('name')->paginate(10);
-            return view('search', compact('users'));
-        } else {
-            $users = User::orderBy('name')->paginate(10);
-            return view('search', compact('users'));
-        }
+    public function home() {
+        $comments = Comment::where('id_comment_author',Auth::id())->paginate(5);
+        return view('home', compact('comments'));
     }
+
 }

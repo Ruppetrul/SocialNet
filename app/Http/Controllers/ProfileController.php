@@ -13,6 +13,9 @@ use function PHPUnit\Framework\isNull;
 class ProfileController extends Controller
 {
     private function getContent($user_id, $reply = null ) {
+        $user_id = htmlspecialchars($user_id);
+        //$reply = htmlspecialchars($reply);
+
         $user = User::where('id',$user_id)->first();
 
         $comments = DB::table('comments as profile_comments')
@@ -42,14 +45,23 @@ class ProfileController extends Controller
 
             ->orderBy('profile_comments.created_at','desc')
             ->paginate(5);
-        return view('profile',compact('user','comments','reply'));
+
+        if(isset($user)) {
+            return view('profile',compact('user','comments','reply'));
+        } else {
+            echo 'User nor found';
+        }
+
     }
 
     public function profile($profile_id = null) {
-        if (isset($profile_id)){
+        $profile_id = htmlspecialchars($profile_id);
+
+        if (isset($profile_id) && is_numeric($profile_id)){
+
             if (isset($_GET['reply'])) {
                 $reply = DB::table('comments')
-                    ->where('id_comment', $_GET['reply'])
+                    ->where('id_comment', htmlspecialchars($_GET['reply']))
                     ->leftJoin('users', 'comments.id_comment_author','=','users.id')
                     ->select('users.id as id_author',
                         'users.name as author_name',
@@ -63,44 +75,53 @@ class ProfileController extends Controller
             return $this->getContent($profile_id);
         } else if (Auth::check()) {
             $user_id = Auth::id();
-            return $this->getContent($user_id);
-            } else {
-                return view('welcome');
+            return redirect('profile/'.$user_id);
+        } else {
+            return redirect('home');
         }
     }
 
     public function sendComment(Request $request, $user_id, $reply_id = null) {
+        $user_id = htmlspecialchars($user_id);
+        $reply_id = htmlspecialchars($reply_id);
         if (Auth::check()) {
-            try {
-                $author_id = $request->user()['id'];
-                $comment = new Comment;
-                $comment->id_comment_author = $author_id;
-                $comment->id_user = $user_id;
-                $comment->text = $_POST['text'];
-                $comment->title = $_POST['title'];
-                if (isset($reply_id)) {
-                    $comment->id_comment_reply = $reply_id;
-                }
-                $comment->save();
-                $_GET['reply'] = null;
-                return redirect('profile/'.$user_id);
+                if (isset($user_id) && is_numeric($user_id)) {
+                    try {
+                    $author_id = $request->user()['id'];
+                    $comment = new Comment;
+                    $comment->id_comment_author = $author_id;
+                    $comment->id_user = $user_id;
+                    $comment->text = htmlspecialchars($_POST['text']);
+                    $comment->title = htmlspecialchars($_POST['title']);
+                    if (is_numeric($reply_id)) {
+                        $comment->id_comment_reply = $reply_id;
+                    }
+                    $comment->save();
+                    $_GET['reply'] = null;
+                    return redirect('profile/'.$user_id);
 
-            } catch (\Exception $exception) {
-                echo 'Add comment error';
-            }
+                } catch (\Exception $exception) {
+                    echo 'Add comment error';
+                }
+                } else {
+                    return redirect('profile/'.$user_id);
+                }
         } else {
-            return view('welcome');
+            return redirect('home');
         }
     }
 
     public function deleteComment(Request $request, $comment_id) {
-        if (Auth::check()) {
+
+        //$comment_id = htmlspecialchars($comment_id);
+
+        if (Auth::check() && is_numeric($comment_id)) {
             $remover_id = $request->user()['id'];
-            $comment = Comment::where('id',$comment_id)->first();
+            $comment = Comment::where('id_comment',$comment_id)->first();
             if (isset($comment)) {
                 $comment_author_id = $comment->id_comment_author;
                 if ($remover_id == $comment_author_id || $remover_id == $comment->id_user) {
-                    $deleteComment = Comment::where('id', $comment_id)->delete();
+                    $deleteComment = Comment::where('id_comment', $comment_id)->delete();
                     if($deleteComment) {
                         return back();
                     } else {
@@ -113,7 +134,7 @@ class ProfileController extends Controller
                 echo 'Comment not found';
             }
         } else {
-            return view('welcome');
+            return view('home');
         }
     }
 }

@@ -14,13 +14,11 @@
                 </thead>
                 <tbody>
                 @foreach($users as $user)
-
-                        <tr onclick="window.location.href='/profile/{{$user->id}}'; return false">
-                            <th scope="row">{{ $user->id }}</th>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
+                        <tr onclick="window.location.href='/profile/{{htmlspecialchars($user->id)}}'; return false">
+                            <th scope="row">{{ htmlspecialchars($user->id) }}</th>
+                                <td>{{ htmlspecialchars($user->name) }}</td>
+                                <td>{{ htmlspecialchars($user->email) }}</td>
                         </tr>
-
                 @endforeach
                 </tbody>
             </table>
