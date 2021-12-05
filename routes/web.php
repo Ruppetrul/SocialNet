@@ -26,18 +26,16 @@ Route::get('/search', 'App\Http\Controllers\SearchController@search')
     ->name('search');
 
 Route::get('/profile/{profile_id}','App\Http\Controllers\ProfileController@profile')
+    ->where(['profile_id' => '[0-9]+'])
     ->name('profile');
 Route::redirect('/profile','/home');
 Route::redirect('/profile/getComments','App\Http\Controllers\ProfileController@getComments');
 
 // POST-запрос при нажатии на нашу кнопку.
-/*
-Route::post('/profile/load_data', 'App\Http\Controllers\ProfileController@load_data')
-    ->name('load_data');*/
 
-Route::post('/profile/load_data', function () {
-   dd($_SESSION);
-})->name('load_data');
+Route::post('/profile/load_data', 'App\Http\Controllers\ProfileController@load_data')
+    ->name('load_data');
+
 // Фильтр, срабатывающий перед пост запросом.
 /*Route:: ('csrf-ajax', function()
 {

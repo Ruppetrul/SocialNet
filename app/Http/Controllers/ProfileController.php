@@ -18,7 +18,7 @@ class ProfileController extends Controller
 
         $user = User::where('id',$user_id)->first();
 
-        $comments = DB::table('comments as profile_comments')
+        /*$comments = DB::table('comments as profile_comments')
             ->leftJoin('users as profile_users','profile_users.id','=',
                 'profile_comments.id_comment_author')
             ->where('profile_comments.id_user','=',$user_id)
@@ -44,18 +44,16 @@ class ProfileController extends Controller
                 )
 
             ->orderBy('profile_comments.created_at','desc')
-            ->paginate(5);
+            ->paginate(5);*/
 
         if(isset($user)) {
-            return view('profile',compact('user','comments','reply'));
+            return view('profile',compact('user','reply'));
         } else {
             echo 'User nor found';
         }
-
     }
 
     public function profile($profile_id = null) {
-        $profile_id = htmlspecialchars($profile_id);
 
         if (isset($profile_id) && is_numeric($profile_id)){
 
@@ -139,18 +137,25 @@ class ProfileController extends Controller
     }
 
     public function load_data(Request $request) {
+
+        //dd($request);
+
         if ($request->ajax()) {
-            if ($request->id > 0) {
+            $user = User::where('id',$request->id_user)->first();
+            if ($request->num > 0) {
+
                 $data = DB::table('comments as profile_comments')
                     ->leftJoin('users as profile_users','profile_users.id','=',
                         'profile_comments.id_comment_author')
-                    ->where('profile_comments.id_user','=',1)
+                    ->where('profile_comments.id_user','=',$request->id_user)
 
                     ->leftJoin('comments as reply_comments','profile_comments.id_comment_reply',
                         '=','reply_comments.id_comment')
                     ->leftJoin('users as reply_users','reply_users.id','=',
                         'reply_comments.id_comment_author')
-                    ->select(
+                    //->orderBy('profile_comments.created_at','desc')
+
+                    ->select(DB::raw('ROW_NUMBER() OVER(ORDER BY profile_comments.created_at DESC) as num'),
                         'profile_comments.id_comment',
                         'profile_comments.text',
                         'profile_comments.title',
@@ -165,21 +170,26 @@ class ProfileController extends Controller
                         'reply_comments.id_comment_author as reply_id_comment_author',
                         'reply_users.name as reply_author_name',
                     )
-                    ->orderBy('profile_comments.created_at','desc')
-                    ->where('id','<', $request->id)
-                    ->limit(5)
-                    ->get();
+                    ->get()
+                    ->where('num','>', $request->num)
+                    ->take(5)
+                    ;
+
+
             } else {
+
                 $data = DB::table('comments as profile_comments')
+
                     ->leftJoin('users as profile_users','profile_users.id','=',
                         'profile_comments.id_comment_author')
-                    ->where('profile_comments.id_user','=',1)
+                    ->where('profile_comments.id_user','=',$request->id_user)
 
                     ->leftJoin('comments as reply_comments','profile_comments.id_comment_reply',
                         '=','reply_comments.id_comment')
                     ->leftJoin('users as reply_users','reply_users.id','=',
                         'reply_comments.id_comment_author')
-                    ->select(
+                    //->orderBy('profile_comments.created_at','desc')
+                    ->select(DB::raw('ROW_NUMBER() OVER(ORDER BY profile_comments.created_at DESC) as num'),
                         'profile_comments.id_comment',
                         'profile_comments.text',
                         'profile_comments.title',
@@ -194,81 +204,24 @@ class ProfileController extends Controller
                         'reply_comments.id_comment_author as reply_id_comment_author',
                         'reply_users.name as reply_author_name',
                     )
-                    ->orderBy('profile_comments.created_at','desc')
+                    //->where('num','>','1')
                     ->limit(5)
                     ->get();
             }
 
-            $output = '';
             $last_id = '';
 
+            //dd($data);
             if(!$data->isEmpty()){
-                foreach ($data as $row) {
-                    $output .= '<div class="row">
-                        <div class="col-md-12">
-                            <h3 class="text-info"><b>'.$row->post.'
-                            </b></h3>
-                            <p>'.$row->post_secr.'</p>
-                            <br/>
-                            <div class="col-md-6">
-                                <p><b>Publish Date - '.'</b></p>
-                            </div>
-                            <div class="col-md-6" align="right">
-                            <p><b><i>By - </i></b></p>
-                            </div>
-                            <br />
-                            <hr />
-                        </div>';
-                    $last_id = $row->id;
-                }
-                $output .= '
-                <div id="load_more">
-
-
-                    <button type="button" name="load_more_button"
-                    class="btn btn-info form-control" data-id="'.$last_id.'" id="load_more_button">
-
-                    </button>
-
-                </div>';
+                return view('layouts.comments.table-ajax', [
+                    'comments' => $data,
+                        'user' => $user,
+             'last_id_num' => $data->last()->num
+                ]
+                );
             } else {
-                $output .= '<div id="load_more">
-                    <button type="button" name="load_more_button" class="btn btn-info form-control">
-                    No Data Found
-                    </button> </div>';
+                echo 'Comments not found';
             }
-            echo $output;
-
-            /*$page=$_POST['page']; // в моём случае пост запросом передается массив чисел вида [1,2,3,4...], здесь я этот массив принимаю.
-            //return View::make('home.more')->with('more', Model::whereNotIn('id','!=', $ids))->get(); //делаем запрос в базу данных, получаем статьи в которых нет id из массива $ids
-            return Comment::table('comments as profile_comments')
-                ->leftJoin('users as profile_users','profile_users.id','=',
-                    'profile_comments.id_comment_author')
-                ->where('profile_comments.id_user','=',1)
-
-                ->leftJoin('comments as reply_comments','profile_comments.id_comment_reply',
-                    '=','reply_comments.id_comment')
-                ->leftJoin('users as reply_users','reply_users.id','=',
-                    'reply_comments.id_comment_author')
-                ->select(
-                    'profile_comments.id_comment',
-                    'profile_comments.text',
-                    'profile_comments.title',
-                    'profile_comments.created_at',
-                    'profile_comments.id_comment_author',
-                    'profile_comments.id_comment_reply as id_comment_reply',
-                    'profile_users.name',
-
-                    'reply_comments.text as reply_text',
-                    'reply_comments.title as reply_title',
-                    'reply_comments.created_at as reply_created_at',
-                    'reply_comments.id_comment_author as reply_id_comment_author',
-                    'reply_users.name as reply_author_name',
-                )
-
-                ->orderBy('profile_comments.created_at','desc')
-                ->limit(5)->offset(1)
-                ->get();*/
         }
     }
 }
