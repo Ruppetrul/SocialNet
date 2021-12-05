@@ -44,19 +44,19 @@ class HomeController extends Controller
     }
 
     public function load_home_comments(Request $request) {
-
+        //dd($request);
         if ($request->ajax()) {
+
             $data = DB::table('comments as profile_comments')
                 ->leftJoin('users as profile_users','profile_users.id','=',
                     'profile_comments.id_comment_author')
-                ->where('profile_comments.id_comment_author','=',$request->id_user)
+                ->where('profile_comments.id_comment_author','=', $request->id_user)
 
                 ->leftJoin('comments as reply_comments','profile_comments.id_comment_reply',
                     '=','reply_comments.id_comment')
                 ->leftJoin('users as reply_users','reply_users.id','=',
                     'reply_comments.id_comment_author')
-                ->select(DB::raw('ROW_NUMBER() OVER(ORDER BY profile_comments.created_at DESC) as num'),
-                    'profile_comments.id_comment',
+                ->select('profile_comments.id_comment',
                     'profile_comments.text',
                     'profile_comments.title',
                     'profile_comments.created_at',
@@ -70,16 +70,13 @@ class HomeController extends Controller
                     'reply_comments.id_comment_author as reply_id_comment_author',
                     'reply_users.name as reply_author_name',
                 )
-                ->get()
-                //->where('profile_comments.id_comment_author','=', Auth::id())
-                ->where('num','>', $request->num)
-                ->take(5);
-            //dd($data);
+                ->skip($request->num)
+                ->take(5)
+                ->get();
 
             if(!$data->isEmpty()){
                 return view('layouts.comments.table-ajax', [
                     'comments' => $data,
-                    'last_num' => $data->last()->num
                 ]);
             }
 

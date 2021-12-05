@@ -21,6 +21,7 @@ try {
                     method: "POST",
                     data: data,
                         success: function (data) {
+                            last_comment_num += 5;
                             var d = document.getElementById("load_more_button");  //   Javascript
 
                             if (data != null && typeof data !== "undefined" && data.trim() !== '') {
@@ -34,7 +35,9 @@ try {
                             }
                         }
                     }).fail(function (xhr, textStatus, errorThrown) {
-
+                    alert(errorThrown);
+                    alert(textStatus);
+                    alert(JSON.stringify(xhr));
                 })
 
             } catch (exception) {

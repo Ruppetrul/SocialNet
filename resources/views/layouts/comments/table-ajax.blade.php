@@ -41,6 +41,6 @@
         </td>
     </tr>
 @endforeach
-<script>
+{{--<script>
      last_comment_num = {{$last_num}}
-</script>
+</script>--}}

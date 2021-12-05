@@ -105,7 +105,7 @@ class ProfileController extends Controller
     public function load_data(Request $request) {
         if ($request->ajax()) {
             $user = User::where('id',$request->id_user)->first();
-            if ($request->num > 0) {
+
                 $data = DB::table('comments as profile_comments')
                     ->leftJoin('users as profile_users','profile_users.id','=',
                         'profile_comments.id_comment_author')
@@ -115,7 +115,7 @@ class ProfileController extends Controller
                         '=','reply_comments.id_comment')
                     ->leftJoin('users as reply_users','reply_users.id','=',
                         'reply_comments.id_comment_author')
-                    ->select(DB::raw('ROW_NUMBER() OVER(ORDER BY profile_comments.created_at DESC) as num'),
+                    ->select(
                         'profile_comments.id_comment',
                         'profile_comments.text',
                         'profile_comments.title',
@@ -130,43 +130,15 @@ class ProfileController extends Controller
                         'reply_comments.id_comment_author as reply_id_comment_author',
                         'reply_users.name as reply_author_name',
                     )
-                    ->get()
-                    ->where('num','>', $request->num)
-                    ->take(5);
-            } else {
-                $data = DB::table('comments as profile_comments')
-                    ->leftJoin('users as profile_users','profile_users.id','=',
-                        'profile_comments.id_comment_author')
-                    ->where('profile_comments.id_user','=',$request->id_user)
-                    ->leftJoin('comments as reply_comments','profile_comments.id_comment_reply',
-                        '=','reply_comments.id_comment')
-                    ->leftJoin('users as reply_users','reply_users.id','=',
-                        'reply_comments.id_comment_author')
-                    //->orderBy('profile_comments.created_at','desc')
-                    ->select(DB::raw('ROW_NUMBER() OVER(ORDER BY profile_comments.created_at DESC) as num'),
-                        'profile_comments.id_comment',
-                        'profile_comments.text',
-                        'profile_comments.title',
-                        'profile_comments.created_at',
-                        'profile_comments.id_comment_author',
-                        'profile_comments.id_comment_reply as id_comment_reply',
-                        'profile_users.name',
-
-                        'reply_comments.text as reply_text',
-                        'reply_comments.title as reply_title',
-                        'reply_comments.created_at as reply_created_at',
-                        'reply_comments.id_comment_author as reply_id_comment_author',
-                        'reply_users.name as reply_author_name',
-                    )
-                    ->limit(5)
+                    ->skip($request->num)
+                    ->take(5)
                     ->get();
-            }
+
 
             if(!$data->isEmpty()){
                 return view('layouts.comments.table-ajax', [
                     'comments' => $data,
                         'user' => $user,
-                    'last_num' => $data->last()->num
                 ]);
             }
         }
