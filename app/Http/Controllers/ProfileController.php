@@ -216,11 +216,11 @@ class ProfileController extends Controller
                 return view('layouts.comments.table-ajax', [
                     'comments' => $data,
                         'user' => $user,
-             'last_id_num' => $data->last()->num
+                    'last_num' => $data->last()->num
                 ]
                 );
             } else {
-                echo 'Comments not found';
+
             }
         }
     }

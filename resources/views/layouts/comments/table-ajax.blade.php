@@ -6,20 +6,16 @@
             @if(isset($comment->id_comment_reply))
                 <p>Reply: </p>
                 <div class="container">
-
                     @if(isset($comment->reply_author_name)||isset($comment->reply_text)
                            ||isset($comment->reply_title))
-
                         <div class="modal-content modal-body mt-4 mb-4  ">
                             <p>Author: {{ htmlspecialchars($comment->reply_author_name) }}</p><br>
                             <a>Title: {{ htmlspecialchars($comment->reply_title) }}</a>
                             <a>{{ htmlspecialchars($comment->reply_text) }}</a><br>
                         </div>
-
                     @else
                         <h>Comment has been deleted</h>
                     @endif
-
                 </div>
             @endif
             {{-- {{ $comment->title }}--}}
@@ -49,7 +45,5 @@
     </tr>
 @endforeach
 <script>
-    var d = document.getElementById("load_more_button");  //   Javascript
-    d.setAttribute('num' , {{$comments->last()->num}});
-    d.textContent = {{$comments->last()->num}};
+     last_comment_num = {{$last_num}}
 </script>
