@@ -13,8 +13,6 @@ use function PHPUnit\Framework\isNull;
 class ProfileController extends Controller
 {
     private function getContent($user_id, $reply = null ) {
-        $user_id = htmlspecialchars($user_id);
-
         $user = User::where('id',$user_id)->first();
 
         if(isset($user)) {
@@ -26,10 +24,9 @@ class ProfileController extends Controller
 
     public function profile(Request $request, $profile_id = null) {
 
-        if (isset($profile_id)){
             if (isset($request->reply)) {
                 $reply = DB::table('comments')
-                    ->where('id_comment', htmlspecialchars($request->reply))
+                    ->where('id_comment', $request->reply)
                     ->leftJoin('users', 'comments.id_comment_author','=','users.id')
                     ->select('users.id as id_author',
                         'users.name as author_name',
@@ -39,48 +36,34 @@ class ProfileController extends Controller
                     ->first();
                 return $this->getContent($profile_id,$reply);
             }
-
-            return $this->getContent($profile_id);
-        } else if (Auth::check()) {
-            $user_id = Auth::id();
-            return redirect('profile/'.$user_id);
-        } else {
-            return redirect('home');
-        }
+            else {
+                return $this->getContent($profile_id);
+            }
     }
 
     public function sendComment(Request $request, $profile_id, $reply_id = null) {
-        $profile_id = htmlspecialchars($profile_id);
-        $reply_id = htmlspecialchars($reply_id);
-        if (Auth::check()) {
-            if (isset($profile_id) && is_numeric($profile_id)) {
-                try {
-                $author_id = $request->user()->id;
+
+        //dd($request);
+          try {
                 $comment = new Comment;
-                $comment->id_comment_author = $author_id;
+                $comment->id_comment_author = Auth::id();
                 $comment->id_user = $profile_id;
-                $comment->text = htmlspecialchars($request->text);
-                $comment->title = htmlspecialchars($request->title);
-                if (is_numeric($reply_id)) {
-                    $comment->id_comment_reply = $reply_id;
-                }
+                $comment->text = $request->text;
+                $comment->title = $request->title;
+                $comment->id_comment_reply = $reply_id;
                 $comment->save();
                 return redirect('profile/'.$profile_id);
 
-                } catch (\Exception $exception) {
-                    echo 'Add comment error';
-                }
-            } else {
-                return redirect('profile/'.$profile_id);
-            }
-        } else {
-            return redirect('home');
-        }
+          } catch (\Exception $exception) {
+              echo 'Add comment error';
+          }
+
     }
 
     public function deleteComment(Request $request, $comment_id) {
-        if (Auth::check() && is_numeric($comment_id)) {
+
             $remover_id = $request->user()->id;
+
             $comment = Comment::where('id_comment',$comment_id)->first();
             if (isset($comment)) {
                 $comment_author_id = $comment->id_comment_author;
@@ -93,13 +76,9 @@ class ProfileController extends Controller
                     }
                 }
                 else echo 'You do not have sufficient authority to delete this post';
-
             } else {
                 echo 'Comment not found';
             }
-        } else {
-            return view('home');
-        }
     }
 
     public function load_data(Request $request) {
@@ -110,7 +89,6 @@ class ProfileController extends Controller
                     ->leftJoin('users as profile_users','profile_users.id','=',
                         'profile_comments.id_comment_author')
                     ->where('profile_comments.id_user','=',$request->id_user)
-
                     ->leftJoin('comments as reply_comments','profile_comments.id_comment_reply',
                         '=','reply_comments.id_comment')
                     ->leftJoin('users as reply_users','reply_users.id','=',

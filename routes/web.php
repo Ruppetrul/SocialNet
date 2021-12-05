@@ -20,8 +20,12 @@ use Illuminate\Support\Facades\Session;
 Route::get('/', function () {
     return redirect('/home');
 });
-Route::get('/home','App\Http\Controllers\HomeController@home')->name('home');
-Route::post('/home/load_data','App\Http\Controllers\HomeController@load_home_comments')->name('load_home_comments');
+Route::get('/home','App\Http\Controllers\HomeController@home')
+    ->name('home')
+    ->middleware('auth');
+
+Route::post('/home/load_data','App\Http\Controllers\HomeController@load_home_comments')
+    ->name('load_home_comments');
 
 Route::get('/search', 'App\Http\Controllers\SearchController@search')
     ->name('search');
@@ -29,15 +33,19 @@ Route::get('/search', 'App\Http\Controllers\SearchController@search')
 Route::get('/profile/{profile_id}','App\Http\Controllers\ProfileController@profile')
     ->where(['profile_id' => '[0-9]+'])
     ->name('profile');
-Route::get('/profile','App\Http\Controllers\ProfileController@profile');
-Route::redirect('/profile/getComments','App\Http\Controllers\ProfileController@getComments');
+
+Route::get('/profile','App\Http\Controllers\ProfileController@profile')
+    ->middleware('auth');
 
 Route::post('/profile/load_data', 'App\Http\Controllers\ProfileController@load_data')
     ->name('load_profile_comments');
 
 Route::post('/profile/sendComment/{user_id}/{reply_id?}', 'App\Http\Controllers\ProfileController@sendComment')
     ->where(['user_id' => '[0-9]+',
-            'reply_id' => '[0-9]+']);
+            'reply_id' => '[0-9]+'])
+    ->middleware('auth');
+
 Route::post('/profile/delete/{comment_id}', 'App\Http\Controllers\ProfileController@deleteComment')
     ->where(['comment_id' => '[0-9]+'])
+    ->middleware('auth')
     ->name('delete');
