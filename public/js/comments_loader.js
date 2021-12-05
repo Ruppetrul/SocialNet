@@ -25,11 +25,9 @@ try {
                             var d = document.getElementById("load_more_button");  //   Javascript
 
                             if (data != null && typeof data !== "undefined" && data.trim() !== '') {
-
                                 $('#students_table tbody').append(data);
                                 d.textContent = "Show more";
                             } else {
-
                                 $('#load_more_button').html('<b>Loading...</b>');
                                 d.textContent = "No new comments found";
                             }
