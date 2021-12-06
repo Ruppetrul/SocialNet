@@ -2,8 +2,12 @@
 
 @section('content')
     @if(isset($user))
+        @if($user->id == Auth::id())
+            <h2 align="center">My books</h2>
+        @else
+            <h2 align="center">{{$user->name}}'s books</h2>
+        @endif
 
-        <h2 align="center">{{$user->name}}'s books</h2>
     @else
         {{--Create view--}}
         <div>

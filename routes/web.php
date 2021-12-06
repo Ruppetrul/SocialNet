@@ -85,8 +85,19 @@ Route::post('/library/alter_book/{book_id}', 'App\Http\Controllers\LibraryContro
     ->middleware('auth')
     ->name('alter_book');
 
-Route::post('/library/read_book/{book_id}', 'App\Http\Controllers\LibraryController@read_book')
+Route::get('/library/read_book/{book_id}', 'App\Http\Controllers\LibraryController@read_book')
     ->where(['book_id' => '[0-9]+'])
     ->middleware('auth')
     ->name('read_book');
+
+Route::post('/library/share_book', 'App\Http\Controllers\LibraryController@share_book')
+    ->where(['book_id' => '[0-9]+'])
+    ->middleware('auth')
+    ->name('share_book');
+
+Route::get('/library/read_share_book/{id_book}',
+    'App\Http\Controllers\LibraryController@read_share_book')
+    ->where(['book_id' => '[0-9]+'])
+    ->name('read_share_book')
+    ->middleware(['auth','shared']);
 

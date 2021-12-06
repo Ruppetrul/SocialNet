@@ -33,15 +33,18 @@
                 </div>
             </form>
 
-        @else
+        @elseif(Auth::check())
             <h4>The user did not give you access to their library :(</h4>
+        @else
+            <h4>
+                Only registered users can mark the library :(</h4>
         @endif
 
             </div>
         </div>
 
         {{--Library access view--}}
-
+        @if(Auth::check())
         @if(Auth::id() != $user->id)
 
             <div class="mt-4 ">
@@ -61,6 +64,7 @@
                 </div>
 
             </div>
+        @endif
         @endif
 
 

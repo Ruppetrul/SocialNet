@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use League\CommonMark\Node\Block\Document;
 
 class LibraryController extends Controller
@@ -30,9 +31,24 @@ class LibraryController extends Controller
                 echo 'This user has not given you access to their library';
             }
         } else {
+            $user = User::find(Auth::id());
 
-            return view('library');
+            return view('library' , [
+                'user' => $user
+            ]);
         }
+    }
+
+    public function share_book(Request $request) {
+
+        $book = Book::find($request->book_id);
+
+        $book->share = !$book->share;
+        $book->save();
+
+        $url = URL::signedRoute('read_share_book', ['id_book' => $request->book_id]);
+
+        return '<script>alert(\''.$url.'\');</script>';
     }
 
     public function read_book(Request $request, $id_book) {
@@ -54,6 +70,16 @@ class LibraryController extends Controller
         } else {
             echo 'нет доступа к книге';
         }
+
+    }
+
+    public function read_share_book(Request $request, $id_book) {
+        $book = Book::find($id_book);
+
+        return view('book-edit', [
+            'book' => $book,
+            'isRead' => true
+        ]);
 
     }
 

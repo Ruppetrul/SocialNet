@@ -91,12 +91,13 @@
                                     <form id="home-form" action="{{ route('home') }}" method="GET" class="d-none">
                                         @csrf
                                     </form>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
                                     <form id="library-form" action="{{ route('library') }}" method="GET" class="d-none">
                                         @csrf
                                     </form>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+
                                 </div>
                             </li>
                         @endguest
