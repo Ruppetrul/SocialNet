@@ -44,11 +44,12 @@ class LibraryController extends Controller
         $book = Book::find($request->book_id);
 
         $book->share = !$book->share;
+        $url = URL::signedRoute('read_share_book', ['id_book' => $request->book_id]);
+        $book->link = $url;
         $book->save();
 
-        $url = URL::signedRoute('read_share_book', ['id_book' => $request->book_id]);
+        return redirect('library/'.$book->id_author);
 
-        return '<script>alert(\''.$url.'\');</script>';
     }
 
     public function read_book(Request $request, $id_book) {

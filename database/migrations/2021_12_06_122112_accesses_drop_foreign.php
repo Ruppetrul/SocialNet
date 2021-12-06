@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterComments2 extends Migration
+class AccessesDropForeign extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AlterComments2 extends Migration
      */
     public function up()
     {
-        Schema::table('comments', function (Blueprint $table) {
-            $table->renameColumn('id','id_comment');
+        Schema::table('accesses', function (Blueprint $table) {
+            $table->dropForeign('accesses_id_book_foreign');
         });
     }
 
@@ -25,8 +25,10 @@ class AlterComments2 extends Migration
      */
     public function down()
     {
-        Schema::table('comments', function (Blueprint $table) {
-            $table->renameColumn('id_comment','id');
+        Schema::table('accesses', function (Blueprint $table) {
+
+            $table->foreign('id_book')->references('id')
+                ->on('books');
         });
     }
 }
