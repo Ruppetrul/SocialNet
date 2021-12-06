@@ -71,6 +71,7 @@ class HomeController extends Controller
 
             if(!$data->isEmpty()){
                 return view('layouts.comments.table-ajax', [
+                      'isHome' => true,
                     'comments' => $data,
                 ]);
             }

@@ -28,16 +28,18 @@
         <td class="container text-capitalize" colspan="2">
             <div class="button-box col-lg-12">
                 @if(Auth::check())
+                    @if(!isset($isHome))
                     <form class="btn btn-primary" action="" method="GET" >
                         @csrf
                         <button class="btn btn-primary" role="button" name="reply" value="{{$comment->id_comment}}">Reply</button>
                     </form>
+                    @endif
                         @if($comment->id_comment_author == Auth::id() || $user->id == Auth::id())
                         <form class="btn btn-primary" action="/profile/delete/{{ $comment->id_comment }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-primary btn-block">Delete</button>
                         </form>
-                        @endif
+                    @endif
                 @endif
             </div>
         </td>
