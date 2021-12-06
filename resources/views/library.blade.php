@@ -20,7 +20,6 @@
         @else
             <h2 align="center">{{$user->name}}'s books</h2>
         @endif
-
     @else
 
         <h2 align="center">Your books</h2>

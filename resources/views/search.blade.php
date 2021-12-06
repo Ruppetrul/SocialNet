@@ -14,11 +14,11 @@
                 </thead>
                 <tbody>
                 @foreach($users as $user)
-                        <tr onclick="window.location.href='/profile/{{$user->id}}'; return false">
-                            <th scope="row">{{ $user->id }}</th>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
-                        </tr>
+                    <tr onclick="window.location.href='/profile/{{$user->id}}'; return false">
+                        <th scope="row">{{ $user->id }}</th>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                    </tr>
                 @endforeach
                 </tbody>
             </table>
@@ -26,5 +26,4 @@
     @else
         <p>Users not found...</p>
     @endif
-
 @endsection

@@ -40,25 +40,24 @@ class LibraryController extends Controller
     }
 
     public function share_book(Request $request) {
-
         $book = Book::find($request->book_id);
-
         $book->share = !$book->share;
-        $url = URL::signedRoute('read_share_book', ['id_book' => $request->book_id]);
-        $book->link = $url;
+
+        if ($book->share) {
+            $url = URL::signedRoute('read_share_book', ['id_book' => $request->book_id]);
+            $book->link = $url;
+        } else {
+            $book->link = null;
+        }
+
         $book->save();
-
         return redirect('library/'.$book->id_author);
-
     }
 
     public function read_book(Request $request, $id_book) {
-
         $book = Book::find($id_book);
-
         $req = Access::where('id_reader', Auth::id())
             ->where('id_author', $book->id_author);
-
         $access = $req->first();
 
         if(isset($access) || $book->id_author == Auth::id()) {
@@ -71,7 +70,6 @@ class LibraryController extends Controller
         } else {
             echo 'нет доступа к книге';
         }
-
     }
 
     public function read_share_book(Request $request, $id_book) {
@@ -81,7 +79,6 @@ class LibraryController extends Controller
             'book' => $book,
             'isRead' => true
         ]);
-
     }
 
     public function add_book(Request $request) {
@@ -92,16 +89,14 @@ class LibraryController extends Controller
         $book->text = $request->text;
         $result = $book->save();
 
-        if ($request) {
+        if ($result) {
             return redirect('library');
         } else {
             echo 'Error add book';
         }
-
     }
 
     public function load_data(Request $request) {
-
         $data = DB::table('books')
             ->where('id_author','=', $request->id_user)
             ->skip($request->num)
@@ -111,7 +106,6 @@ class LibraryController extends Controller
         return view('layouts.library.book-ajax', [
             'books' => $data,
         ]);
-
     }
 
     public function allow_access(Request $request) {
@@ -127,7 +121,6 @@ class LibraryController extends Controller
     public function limit_access(Request $request){
         $req = Access::where('id_reader', $request->id_user)
             ->where('id_author', Auth::id());
-
         $access = $req->first();
 
         if (isset($access)) {
@@ -138,12 +131,8 @@ class LibraryController extends Controller
     }
 
     public function delete_book(Request $request) {
-
         $req = Book::where('id', $request->book_id);
-
         $book = $req->first();
-
-        //dd($book);
 
         if (isset($book)) {
             $deleteBook = Book::where('id', $request->book_id)->delete();
@@ -152,16 +141,14 @@ class LibraryController extends Controller
         }
 
         return back();
-
     }
 
     public function edit_book(Request $request, $book_id = null) {
-
         if (isset($book_id)) {
 
             $req = Book::where('id', $request->book_id);
-
             $book = $req->first();
+
             if (isset($book)) {
                 return view('book-edit', [
                     'book' => $book,
@@ -169,7 +156,6 @@ class LibraryController extends Controller
             } else {
                 echo 'Book not found';
             }
-
         } else {
             return view('book-edit');
         }
@@ -178,7 +164,6 @@ class LibraryController extends Controller
     public function alter_book(Request $request, $id_book) {
 
         $book = Book::find($id_book);
-
         $book->name = $request->name;
         $book->text = $request->text;
         $result = $book->save();
@@ -188,12 +173,4 @@ class LibraryController extends Controller
         }
     }
 }
-       /* if (isset($comment)) {
-            $comment_author_id = $comment->id_comment_author;
-            if ($access->id_author == Auth::id()) {
-                $deleteComment = Comment::where('id_comment', $comment_id)->delete();
 
-        return redirect('profile/'.$request->id_user);
-    }
-
-}*/

@@ -39,35 +39,28 @@
             <h4>
                 Only registered users can mark the library :(</h4>
         @endif
-
             </div>
         </div>
 
         {{--Library access view--}}
-        @if(Auth::check())
         @if(Auth::id() != $user->id)
-
             <div class="mt-4 ">
                 <div class="modal-content modal-body">
                     @if(isset($access_to_user))
 
                         <form action="{{ route('limit_access') }}" class=""  method="POST" >
                             @csrf
-                            <button style="background: #FF0000;" class="btn btn-primary btn-block" role="button" value="{{ $user->id }}" name="id_user">Запретить пользователю доступ</button>
+                            <button style="background: #FF0000;" class="btn btn-primary btn-block" role="button" value="{{ $user->id }}" name="id_user">Deny access</button>
                         </form>
                     @else
                         <form action="{{ route('allow_access') }}" class="" method="POST" >
                             @csrf
-                            <button style="background: #35b606;" class="btn btn-primary btn-block" role="button" value="{{ $user->id }}" name="id_user">Разрешить пользователю доступ</button>
+                            <button style="background: #35b606;" class="btn btn-primary btn-block" role="button" value="{{ $user->id }}" name="id_user">Allow access</button>
                         </form>
                     @endif
                 </div>
-
             </div>
         @endif
-        @endif
-
-
 
         {{--Send message view--}}
         @if(Auth::check())
@@ -103,7 +96,6 @@
                         </div>
                         </div>
                     </form>
-
             </div>
         @else
             <div class="modal-content modal-body mt-4 mb-4 ">

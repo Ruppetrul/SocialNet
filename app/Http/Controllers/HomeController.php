@@ -27,11 +27,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        if (Auth::check()) {
-            // return view('profile');
-        } else {
-           // return redirect('/home');;
-        }
+
     }
 
     public function home() {
@@ -44,7 +40,6 @@ class HomeController extends Controller
     }
 
     public function load_home_comments(Request $request) {
-        //dd($request);
         if ($request->ajax()) {
 
             $data = DB::table('comments as profile_comments')
@@ -79,8 +74,6 @@ class HomeController extends Controller
                     'comments' => $data,
                 ]);
             }
-
         }
     }
-
 }
