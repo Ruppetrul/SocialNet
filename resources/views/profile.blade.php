@@ -3,7 +3,9 @@
 @section('content')
 
     @if(isset($user))
-        <div class="modal-content">
+
+        {{--User view--}}
+        <div class="modal-content mb-4">
             <div class="modal-body">
                 <table>
                     <tbody>
@@ -11,7 +13,6 @@
                         @if($user->id==Auth::id())
                             (You)
                         @endif
-
                     </tr>
                     <td>Email: {{ $user->email }}</td>
                     </tbody>
@@ -19,6 +20,52 @@
             </div>
         </div>
 
+        {{--Library view--}}
+        <div class="modal-content mt-4 ">
+            <div id="" class="modal-body ">
+
+        @if(isset($books) || $user->id == Auth::id())
+
+            <form method="get" action="/library/{{$user->id}}">
+                @csrf
+                <div class="">
+                    <button type="submit" class="btn btn-primary btn-block">Go to his library</button>
+                </div>
+            </form>
+
+        @else
+            <h4>The user did not give you access to their library :(</h4>
+        @endif
+
+            </div>
+        </div>
+
+        {{--Library access view--}}
+
+        @if(Auth::id() != $user->id)
+
+            <div class="mt-4 ">
+                <div class="modal-content modal-body">
+                    @if(isset($access_to_user))
+
+                        <form action="{{ route('limit_access') }}" class=""  method="POST" >
+                            @csrf
+                            <button style="background: #FF0000;" class="btn btn-primary btn-block" role="button" value="{{ $user->id }}" name="id_user">Запретить пользователю доступ</button>
+                        </form>
+                    @else
+                        <form action="{{ route('allow_access') }}" class="" method="POST" >
+                            @csrf
+                            <button style="background: #35b606;" class="btn btn-primary btn-block" role="button" value="{{ $user->id }}" name="id_user">Разрешить пользователю доступ</button>
+                        </form>
+                    @endif
+                </div>
+
+            </div>
+        @endif
+
+
+
+        {{--Send message view--}}
         @if(Auth::check())
             <div class="modal-content modal-body mt-4 mb-4">
                 @if(isset($_GET['reply']))

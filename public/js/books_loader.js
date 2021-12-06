@@ -3,14 +3,13 @@ try {
 
         var _token = $('input[name="_token"]').val();
 
-        load_data(user_id, _token);
+        load_data(id_user, _token);
 
-        function load_data(user_id = 0, _token) {
+        function load_data(id_user = 0, _token) {
 
             var data = {};
-            data["num"] = last_comment_num;
-            data["token"] = _token;
-            data["id_user"] = user_id;
+            data["num"] = last_book_num;
+            data["id_user"] = id_user;
 
             try {
                 $.ajax({
@@ -21,17 +20,13 @@ try {
                     method: "POST",
                     data: data,
                         success: function (data) {
-
-                            last_comment_num += 5;
-                            var d = document.getElementById("load_more_button");  //   Javascript
+                            last_book_num += 5;
+                            var d = document.getElementById("load_more_books_button");  //   Javascript
 
                             if (data != null && typeof data !== "undefined" && data.trim() !== '') {
-
-                                $('#students_table tbody').append(data);
+                                $('#books_ul').append(data);
                                 d.textContent = "Show more";
                             } else {
-
-                                $('#load_more_button').html('<b>Loading...</b>');
                                 d.textContent = "No new comments found";
                             }
                         }
@@ -46,9 +41,9 @@ try {
             }
         }
 
-        $(document).on('click', '#load_more_button', function(){
-            $('#load_more_button').html('<b>Loading...</b>');
-            load_data(user_id, _token);
+        $(document).on('click', '#load_more_books_button', function(){
+            $('#load_more_books_button').html('<b>Loading...</b>');
+            load_data(id_user, _token);
         });
     });
 }

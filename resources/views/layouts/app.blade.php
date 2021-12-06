@@ -59,6 +59,12 @@
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
+
+                            @if (Route::has('library'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('library') }}">{{ __('Library') }}</a>
+                                </li>
+                            @endif
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -77,10 +83,18 @@
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
+                                    <a class="dropdown-item" href="{{ route('library') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('library-form').submit();">
+                                        {{ __('Library') }}
+                                    </a>
                                     <form id="home-form" action="{{ route('home') }}" method="GET" class="d-none">
                                         @csrf
                                     </form>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                    <form id="library-form" action="{{ route('library') }}" method="GET" class="d-none">
                                         @csrf
                                     </form>
                                 </div>
