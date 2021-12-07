@@ -42,9 +42,9 @@ class HomeController extends Controller
     public function load_home_comments(Request $request) {
         if ($request->ajax()) {
 
-            $user = User::where('id',$request->id_user)->first();
+            $user = User::where('id',Auth::id())->first();
 
-            $data = Comment::where('id_user', $request->id_user)
+            $data = Comment::where('id_comment_author', Auth::id())
                 ->with('reply')
                 ->with('author')
                 ->skip($request->num)

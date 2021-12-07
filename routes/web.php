@@ -35,9 +35,8 @@ Route::prefix('/profile')->middleware(['auth'])->group(function () {
     Route::get('/','App\Http\Controllers\ProfileController@profile')
         ->middleware('library.access');
 
-
     Route::get('/{user}',[ProfileController::class,'profile'])
-        ->where(['id' => '[0-9]+'])
+        ->where(['user' => '[0-9]+'])
         ->middleware('library.access')
         ->name('profile');
 

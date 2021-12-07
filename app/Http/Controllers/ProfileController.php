@@ -31,7 +31,7 @@ class ProfileController extends Controller {
         }
 
         $data = (object)$data;
-        //dd($data);
+        //dd($request);
         return view('profile', compact('data'));
     }
 

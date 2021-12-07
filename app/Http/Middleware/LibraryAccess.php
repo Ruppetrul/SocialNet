@@ -21,19 +21,19 @@ class LibraryAccess
 
     public function handle(Request $request, Closure $next)
     {
-        $id_user = $request->id_user;
+        $user = $request->user;
 
-        if (isset($id_user)) {
+        if (isset($user)) {
 
                 $access_to_user = Access::
-                where('id_reader', $id_user)
+                where('id_reader', $user->id)
                     ->where('id_author', Auth::id())
                     ->select('*')
                     ->first();
 
                 $access_to_me = Access::
                 where('id_reader', Auth::id())
-                    ->where('id_author', $id_user)
+                    ->where('id_author', $user->id)
                     ->select('*')
                     ->first();
 
