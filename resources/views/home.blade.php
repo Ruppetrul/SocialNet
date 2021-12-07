@@ -15,7 +15,7 @@
 @if (Auth::check())
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        var user_id = {{$user->id}};
+        var id_user = {{$user->id}};
         var last_comment_num = 0;
         let url = "{{ route('load_home_comments') }}"
     </script>

@@ -3,14 +3,14 @@ try {
 
         var _token = $('input[name="_token"]').val();
 
-        load_data(user_id, _token);
+        load_data(id_user, _token);
 
-        function load_data(user_id = 0, _token) {
+        function load_data(id_user = 0, _token) {
 
             var data = {};
             data["num"] = last_comment_num;
             data["token"] = _token;
-            data["id_user"] = user_id;
+            data["id_user"] = id_user;
 
             try {
                 $.ajax({
@@ -48,7 +48,7 @@ try {
 
         $(document).on('click', '#load_more_button', function(){
             $('#load_more_button').html('<b>Loading...</b>');
-            load_data(user_id, _token);
+            load_data(id_user, _token);
         });
     });
 }

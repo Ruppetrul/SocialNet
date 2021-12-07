@@ -40,11 +40,11 @@ class LibraryController extends Controller
     }
 
     public function share_book(Request $request) {
-        $book = Book::find($request->book_id);
+        $book = Book::find($request->id_book);
         $book->share = !$book->share;
 
         if ($book->share) {
-            $url = URL::signedRoute('read_share_book', ['id_book' => $request->book_id]);
+            $url = URL::signedRoute('read_share_book', ['id_book' => $request->id_book]);
             $book->link = $url;
         } else {
             $book->link = null;
@@ -97,8 +97,8 @@ class LibraryController extends Controller
     }
 
     public function load_data(Request $request) {
-        $data = DB::table('books')
-            ->where('id_author','=', $request->id_user)
+        $data = Book::
+            where('id_author','=', $request->id_user)
             ->skip($request->num)
             ->take(5)
             ->get();
@@ -119,6 +119,7 @@ class LibraryController extends Controller
     }
 
     public function limit_access(Request $request){
+
         $req = Access::where('id_reader', $request->id_user)
             ->where('id_author', Auth::id());
         $access = $req->first();
@@ -131,11 +132,11 @@ class LibraryController extends Controller
     }
 
     public function delete_book(Request $request) {
-        $req = Book::where('id', $request->book_id);
+        $req = Book::where('id', $request->id_book);
         $book = $req->first();
 
         if (isset($book)) {
-            $deleteBook = Book::where('id', $request->book_id)->delete();
+            $deleteBook = Book::where('id', $request->id_book)->delete();
         } else {
             echo 'Book not found';
         }
@@ -143,10 +144,10 @@ class LibraryController extends Controller
         return back();
     }
 
-    public function edit_book(Request $request, $book_id = null) {
-        if (isset($book_id)) {
+    public function edit_book(Request $request, $id_book = null) {
+        if (isset($id_book)) {
 
-            $req = Book::where('id', $request->book_id);
+            $req = Book::where('id', $request->id_book);
             $book = $req->first();
 
             if (isset($book)) {

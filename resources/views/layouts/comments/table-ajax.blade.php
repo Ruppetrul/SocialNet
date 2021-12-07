@@ -6,12 +6,11 @@
             @if(isset($comment->id_comment_reply))
                 <p>Reply: </p>
                 <div class="container">
-                    @if(isset($comment->reply_author_name)||isset($comment->reply_text)
-                           ||isset($comment->reply_title))
+                    @if(isset($comment->reply))
                         <div class="modal-content modal-body mt-4 mb-4  ">
-                            <p>Author: {{ $comment->reply_author_name }}</p><br>
-                            <a>Title: {{ $comment->reply_title }}</a>
-                            <a>{{ $comment->reply_text }}</a><br>
+                            {{--<p>Author: {{ $comment->reply->text }}</p><br>--}}
+                            <a>Title: {{ $comment->reply->title }}</a>
+                            <a>{{ $comment->reply->text }}</a><br>
                         </div>
                     @else
                         <h>Comment has been deleted</h>
@@ -34,7 +33,7 @@
                         <button class="btn btn-primary" role="button" name="reply" value="{{$comment->id_comment}}">Reply</button>
                     </form>
                     @endif
-                        @if($comment->id_comment_author == Auth::id() || $user->id == Auth::id())
+                        @if($comment->id_comment_author == Auth::id() || $id_user == Auth::id())
                         <form class="btn btn-primary" action="/profile/delete/{{ $comment->id_comment }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-primary btn-block">Delete</button>

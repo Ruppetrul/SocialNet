@@ -15,14 +15,14 @@
                 </form>
                 <form class="btn btn-primary" action="{{route('delete_book')}}" method="POST">
                     @csrf
-                    <button type="submit" name="book_id" value="{{$book->id}}" class="btn btn-primary">Delete book</button>
+                    <button type="submit" name="id_book" value="{{$book->id}}" class="btn btn-primary">Delete book</button>
                 </form>
                 <form class="btn btn-primary" action="{{route('share_book')}}" method="POST">
                     @csrf
                 @if($book->share)
-                    <button type="submit" name="book_id" value="{{$book->id}}" class="btn btn-primary">Close share</button>
+                    <button type="submit" name="id_book" value="{{$book->id}}" class="btn btn-primary">Close share</button>
                 @else
-                    <button type="submit" name="book_id" value="{{$book->id}}" class="btn btn-primary">Open share</button>
+                    <button type="submit" name="id_book" value="{{$book->id}}" class="btn btn-primary">Open share</button>
                 @endif
                 </form>
             @endif
@@ -30,7 +30,7 @@
             <br>
             <form class="btn btn-primary" action="/library/read_book/{{$book->id}}" method="GET">
                 @csrf
-                <button type="submit" name="book_id" value="{{$book->id}}" class="btn btn-primary">Read</button>
+                <button type="submit" name="id_book" value="{{$book->id}}" class="btn btn-primary">Read</button>
             </form>
         </div>
     </li>

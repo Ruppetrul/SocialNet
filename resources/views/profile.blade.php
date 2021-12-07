@@ -2,19 +2,19 @@
 
 @section('content')
 
-    @if(isset($user))
+    @if(isset($data->user))
 
         {{--User view--}}
         <div class="modal-content mb-4">
             <div class="modal-body">
                 <table>
                     <tbody>
-                    <tr>Name: {{ $user->name }}
-                        @if($user->id==Auth::id())
+                    <tr>Name: {{ $data->user->name }}
+                        @if($data->user->id==Auth::id())
                             (You)
                         @endif
                     </tr>
-                    <td>Email: {{ $user->email }}</td>
+                    <td>Email: {{ $data->user->email }}</td>
                     </tbody>
                 </table>
             </div>
@@ -24,9 +24,9 @@
         <div class="modal-content mt-4 ">
             <div id="" class="modal-body ">
 
-        @if(isset($books) || $user->id == Auth::id())
+        @if(isset($data->books) || $data->user->id == Auth::id())
 
-            <form method="get" action="/library/{{$user->id}}">
+            <form method="get" action="/library/{{$data->user->id}}">
                 @csrf
                 <div class="">
                     <button type="submit" class="btn btn-primary btn-block">Go to his library</button>
@@ -43,19 +43,19 @@
         </div>
 
         {{--Library access view--}}
-        @if(Auth::id() != $user->id)
+        @if(Auth::id() != $data->user->id)
             <div class="mt-4 ">
                 <div class="modal-content modal-body">
-                    @if(isset($access_to_user))
+                    @if(isset($data->access_to_user))
 
                         <form action="{{ route('limit_access') }}" class=""  method="POST" >
                             @csrf
-                            <button style="background: #FF0000;" class="btn btn-primary btn-block" role="button" value="{{ $user->id }}" name="id_user">Deny access</button>
+                            <button style="background: #FF0000;" class="btn btn-primary btn-block" role="button" value="{{ $data->user->id }}" name="id_user">Deny access</button>
                         </form>
                     @else
                         <form action="{{ route('allow_access') }}" class="" method="POST" >
                             @csrf
-                            <button style="background: #35b606;" class="btn btn-primary btn-block" role="button" value="{{ $user->id }}" name="id_user">Allow access</button>
+                            <button style="background: #35b606;" class="btn btn-primary btn-block" role="button" value="{{ $data->user->id }}" name="id_user">Allow access</button>
                         </form>
                     @endif
                 </div>
@@ -65,21 +65,21 @@
         {{--Send message view--}}
         @if(Auth::check())
             <div class="modal-content modal-body mt-4 mb-4">
-                @if(isset($_GET['reply']))
-                    <form method="post" action="/profile/sendComment/{{ $user['id'] }}/{{ $_GET['reply'] }}">
+                @if(isset($_GET['$commented_comment']))
+                    <form method="post" action="/profile/sendComment/{{ $data->user->id }}/{{ $_GET['$commented_comment'] }}">
                 @else
-                    <form method="post" action="/profile/sendComment/{{ $user['id'] }}">
+                    <form method="post" action="/profile/sendComment/{{ $data->user->id }}">
                 @endif
                     @csrf
                         <div class="col-md-12">
 
-                        @if(isset($reply))
+                        @if(isset($data->commented_comment))
                         <div class="form-group">
-                            <a> Re: {{ $reply->author_name }} </a>
+                            <a> Re: {{ $data->commented_comment->author_name }} </a>
                             <div class="container">
                                 <div class="modal-content modal-body mt-4 mb-4  ">
-                                    <p>Title: {{ $reply->title }}</p>
-                                    <a>{{ $reply->text }}</a><br>
+                                    <p>Title: {{ $data->commented_comment->title }}</p>
+                                    <a>{{ $data->commented_comment->text }}</a><br>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +116,8 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
-    var user_id = {{ $user->id }};
+
+    var id_user = {{ $data->user->id }};
     var last_comment_num = 0;
     let url = "{{ route('load_profile_comments') }}"
 </script>
